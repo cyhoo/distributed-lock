@@ -1,6 +1,8 @@
 package com.cc.distributedLock.redisson.sb.demo.service;
 
 import com.cc.distributedLock.core.DistributedLock;
+import com.cc.distributedLock.core.LockFailStrategy;
+import com.cc.distributedLock.core.MultiKeyBuildStrategy;
 import com.cc.distributedLock.redisson.sb.demo.vo.req.InventoryDeductReq;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -12,11 +14,12 @@ public class InventoryServiceImpl implements InventoryService {
 
 
     @Override
-    @DistributedLock(prefix = "inventory",spiltChart = "-",keys = {"uid=#{#req.uid}","productId=#{#req.productId}"},waitTime = 3000L)
+    @DistributedLock(prefix = "inventory",spiltChart = "-",keys = {"uid=#{#req.uid}","productId=#{#req.productId}"},waitTime = 3000L,
+            multiKeyStrategy = MultiKeyBuildStrategy.SINGLY,lockFailStrategy = LockFailStrategy.THROW_EXCEPTION)
     public Boolean deduct(InventoryDeductReq req) {
         log.info("deduct 开始:{}",req);
         try {
-            Thread.sleep(10000L);
+            Thread.sleep(100 * 1000L);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -45,4 +45,10 @@ public @interface DistributedLock {
      * @return
      */
     TimeUnit timeUnit() default TimeUnit.MILLISECONDS;
+
+    /**
+     * 加锁失败策略，默认抛出异常
+     * @return
+     */
+    LockFailStrategy lockFailStrategy() default LockFailStrategy.THROW_EXCEPTION;
 }
