@@ -1,22 +1,21 @@
 package com.cc.distributedLock.core;
 
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 
+@Slf4j
 @Aspect
 public class DistributedLockAspect {
 
     private LockInfoProvider lockInfoProvider;
 
-    private LockResultCallback lockResultCallback;
-
     private LockerProvider lockerProvider;
 
-    public DistributedLockAspect(LockInfoProvider lockInfoProvider, LockResultCallback lockResultCallback, LockerProvider lockerProvider) {
+    public DistributedLockAspect(LockInfoProvider lockInfoProvider, LockerProvider lockerProvider) {
         this.lockInfoProvider = lockInfoProvider;
-        this.lockResultCallback = lockResultCallback;
         this.lockerProvider = lockerProvider;
     }
 
@@ -27,21 +26,15 @@ public class DistributedLockAspect {
     public void around(ProceedingJoinPoint proceedingJoinPoint,DistributedLock distributedLock) throws Throwable {
         LockInfo lockInfo = this.lockInfoProvider.createInfo(proceedingJoinPoint, distributedLock);
         Locker locker = lockerProvider.createLocker(lockInfo);
-        boolean lockResult = false;
-        DistributedLockException lockException = null;
-        //处理加锁步骤
-        try {
-            lockResult = locker.lock(lockInfo);
-        }catch (DistributedLockException e){
-            lockException = e;
-        }finally {
-            if (lockResult && lockException != null){
-                locker.release(lockInfo);
+
+        //加锁
+        boolean lockResult = locker.lock(lockInfo);
+        if (!lockResult){
+            log.info("分布式锁加锁失败,lockInfo:{}",lockInfo);
+            if (distributedLock.lockFailStrategy() == LockFailStrategy.THROW_EXCEPTION){
+                throw new DistributedLockFailException("分布式锁加锁失败");
             }
         }
-        //处理加锁结果
-        this.lockResultCallback.lockResultHandle(lockInfo,lockResult,lockException);
-
         //执行业务逻辑
         try {
             proceedingJoinPoint.proceed();

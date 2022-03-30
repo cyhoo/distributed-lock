@@ -23,12 +23,6 @@ public class DistributedLockRedissonAutoConfiguration {
         return redissonManager;
     }
 
-    @Bean("lockCallback")
-    @ConditionalOnMissingBean(LockResultCallback.class)
-    public LockResultCallback lockCallback(){
-        return new DefaultLockResultHandler();
-    }
-
     @Bean("lockInfoProvider")
     @ConditionalOnMissingBean(LockInfoProvider.class)
     public LockInfoProvider lockInfoProvider(){
@@ -45,8 +39,8 @@ public class DistributedLockRedissonAutoConfiguration {
 
     @Bean("distributedLockAspect")
     @ConditionalOnBean(value = {LockInfoProvider.class,RedissonLockerProvider.class})
-    public DistributedLockAspect distributedLockAspect(LockInfoProvider lockInfoProvider, LockResultCallback lockResultCallback, RedissonLockerProvider redissonLockerProvider){
-        DistributedLockAspect distributedLockAspect = new DistributedLockAspect(lockInfoProvider, lockResultCallback,redissonLockerProvider);
+    public DistributedLockAspect distributedLockAspect(LockInfoProvider lockInfoProvider, RedissonLockerProvider redissonLockerProvider){
+        DistributedLockAspect distributedLockAspect = new DistributedLockAspect(lockInfoProvider,redissonLockerProvider);
         return distributedLockAspect;
     }
 }

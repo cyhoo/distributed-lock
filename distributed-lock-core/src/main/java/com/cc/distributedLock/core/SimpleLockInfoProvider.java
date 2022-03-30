@@ -49,35 +49,6 @@ public class SimpleLockInfoProvider implements LockInfoProvider{
         return lockInfo;
     }
 
-    public static void main(String[] args) {
-        Car ft = new Car();
-        ft.setName("mengdiou");
-        Car mzd = new Car();
-        mzd.setName("aksl");
-        List<Car> cars= new ArrayList<>();
-        cars.add(ft);
-        cars.add(mzd);
-        User cwh = new User();
-        cwh.setAge(28);
-        cwh.setCars(cars);
-        cwh.setName("蔡伟浩");
-        StandardEvaluationContext context = new StandardEvaluationContext();
-        context.setVariable("cwh",cwh);
-        ExpressionParser expressionParser = new SpelExpressionParser();
-//        System.out.println(expressionParser.parseExpression("key:value:xxx",
-//                        ParserContext.TEMPLATE_EXPRESSION)
-//                .getValue(context,String.class));
-//        System.out.println(expressionParser.parseExpression("#{#cwh.name}在#{#cwh.age}岁拥有#{#cwh.cars[0].name}",
-//                        ParserContext.TEMPLATE_EXPRESSION)
-//                .getValue(context,String.class));
-        System.out.println(expressionParser.parseExpression("#{#cwh.name}在#{#cwh.age}岁拥有#{#cwh.cars[0].name}",
-                        ParserContext.TEMPLATE_EXPRESSION)
-                .getValue(context,String.class));
-//        System.out.println(expressionParser.parseExpression("",
-//                ParserContext.TEMPLATE_EXPRESSION)
-//                .getValue(context,String.class));
-    }
-
     @Data
     public static class User{
         private List<Car> cars;

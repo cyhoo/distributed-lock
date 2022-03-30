@@ -44,7 +44,7 @@ public class RedissonLockInfoProvider implements LockInfoProvider {
         }).collect(Collectors.toList());
 
         RedissonLockInfo lockInfo = new RedissonLockInfo();
-        lockInfo.setKeys(formatKeys);
+        lockInfo.setKeys(distributedLock.multiKeyStrategy().build(formatKeys, distributedLock.spiltChart()));
         lockInfo.setPrefix(distributedLock.prefix());
         lockInfo.setSpiltChart(distributedLock.spiltChart());
         lockInfo.setWaitTime(distributedLock.waitTime());
