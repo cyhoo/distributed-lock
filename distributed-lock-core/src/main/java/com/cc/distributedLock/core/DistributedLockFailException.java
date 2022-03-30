@@ -7,6 +7,7 @@ public class DistributedLockFailException extends DistributedLockException{
 
     private String msg;
 
+
     public DistributedLockFailException(String msg) {
         super(msg);
         this.msg = msg;
